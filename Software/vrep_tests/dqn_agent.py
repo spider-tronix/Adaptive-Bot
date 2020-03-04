@@ -16,10 +16,14 @@ TAU = 1e-3              # for soft update of target parameters
 LR = 5e-4               # learning rate 
 UPDATE_EVERY = 4        # how often to update the network
 
-device = "cpu" #torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print("device:", device)
 if device == "cpu":
-    print("You ASSHOLE !! CHANGE IT GPU !!!!!!!!!!!!!!")
+    sure = input("Device : cpu (y/n)")
+    if sure == 'y':
+        pass
+    else:
+        quit()
 
 class Agent():
     """Interacts with and learns from the environment."""
