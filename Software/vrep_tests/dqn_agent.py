@@ -16,8 +16,10 @@ TAU = 1e-3              # for soft update of target parameters
 LR = 5e-4               # learning rate 
 UPDATE_EVERY = 4        # how often to update the network
 
-device = "cpu"# torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+device = "cpu" #torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print("device:", device)
+if device == "cpu":
+    print("You ASSHOLE !! CHANGE IT GPU !!!!!!!!!!!!!!")
 
 class Agent():
     """Interacts with and learns from the environment."""
@@ -118,14 +120,14 @@ class Agent():
         for target_param, local_param in zip(target_model.parameters(), local_model.parameters()):
             target_param.data.copy_(tau*local_param.data + (1.0-tau)*target_param.data)
     
-    def save(self, save_dir):
+    def save(self, save_dir, episode):
         """Save the agent's target model
 
         Params
         ======
             save_dir (os.path): model will be saved to
         """
-        torch.save(self.qnetwork_target.state_dict(), os.path.join(save_dir, 'target_network'))
+        torch.save(self.qnetwork_target.state_dict(), os.path.join(save_dir, f'target_network_{episode}'))
 
     def load(self, load_path):
         """Loads the saved model, to continue training/testing
@@ -135,6 +137,7 @@ class Agent():
             load_path (os.path): model will be loaded from
         """
         self.qnetwork_local.load_state_dict(torch.load(load_path))
+        self.qnetwork_target.load_state_dict(torch.load(load_path))
 
 
 

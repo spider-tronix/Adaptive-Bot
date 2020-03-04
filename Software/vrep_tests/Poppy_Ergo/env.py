@@ -1,14 +1,16 @@
 import gym
 from gym import spaces
 import numpy as np
+import random
 
 import sim
 import time
+from math import sin, cos, radians, pi
 
 #### action map ########
 # 0 - no movement
-# 1 - move left by +ANGLE_DISCRETIZATION degree
-# 2 - move right by -ANGLE_DISCRETIZATION degree
+# 1 - move left by 1 degree
+# 2 - move right by 1 degree
 
 #### possible spaces ########
 # -2.6179075241088867
@@ -19,33 +21,52 @@ ANGLE_DISCRETIZATION = 5
 
 class PoppyEnv(gym.Env):
     
-    def __init__(self, clientID, servo_handles):
+    def __init__(self, clientID, green_box, red_box):
+        self.num_joints = 6
         self.clientID = clientID
-        self.servo_handles = servo_handles
+        self.green_box = green_box
+        self.red_box = red_box
         self.action_map = {0:0, 1:ANGLE_DISCRETIZATION, 2:-ANGLE_DISCRETIZATION}
+        
+        self.action_size = self.num_joints*3        # 0, left, right
+        self.state_size = self.num_joints + 2       # 6 DOF + (x, y) box cords
+
         self._setup_spaces()
+        self._get_joint_handles()
+        self._init_pos()
+
+    def _get_joint_handles(self):
+        self.joint_handles = []
+        for i in range(1, self.num_joints+1):
+            _, handle = sim.simxGetObjectHandle(self.clientID, f"m{i}", sim.simx_opmode_blocking)
+            self.joint_handles.append(handle)
+        
+
+    def _init_pos(self):
+        # print positions
+        for i, handle in enumerate(self.joint_handles, start=1):
+            print(f"m{i}_pos", sim.simxGetJointPosition(self.clientID, handle, sim.simx_opmode_streaming)[1])
+
 
     def _setup_spaces(self):
-        # action space = NUM_SERVOS * 3
-        self.action_space = spaces.Discrete(9)
-        self.observation_space = spaces.Box(low=np.array([-2.62, -1.58, -2.62]), 
-                                            high=np.array([2.62, 1.58, 2.62]),
+        self.action_space = spaces.Discrete(self.action_size)
+        self.observation_space = spaces.Box(low=np.array([-5.0, -5.0, -2.62, -2.62, -2.62, -2.62, -2.62, -2.62]), 
+                                            high=np.array([5.0, 5.0, 2.62, 2.62, 2.62, 2.62, 2.62, 2.62]),
                                             dtype=np.float32)
 
-
     def step(self, action):
-        assert self.action_space.contains(action)
-        
-        handle = self.servo_handles[int(action/3)]
-        value = self.action_map[action%3]
+            assert self.action_space.contains(action)
+            
+            handle = self.joint_handles[int(action/3)]
+            value = self.action_map[action%3]
 
-        #for angle, handle in zip(action, self.joint_handles)        
-        cur_pos = sim.simxGetJointPosition(self.clientID,handle,sim.simx_opmode_buffer)[1]
-        sim.simxSetJointTargetPosition(self.clientID,handle,cur_pos+value*(3.14/180),sim.simx_opmode_oneshot)
+            #for angle, handle in zip(action, self.joint_handles)        
+            cur_pos = sim.simxGetJointPosition(self.clientID,handle,sim.simx_opmode_buffer)[1]
+            sim.simxSetJointTargetPosition(self.clientID,handle,cur_pos+value*(3.14/180),sim.simx_opmode_oneshot)
 
-        # give reward for make it straight
-        reward, done = self.detect_collision()
-        return self.get_state(), reward, done, {}
+            # give reward for make it straight
+            reward, done = self.detect_collision()
+            return self.get_state(), reward, done, {}
     
     def detect_collision(self):
         reward = 0
@@ -70,14 +91,30 @@ class PoppyEnv(gym.Env):
             raise NotImplementedError
         
     def get_state(self):
-        state = []
-        for handle in self.servo_handles:
+        state = [self.green_box_cords[0], self.green_box_cords[1]]
+        # Add servo angles
+        for handle in self.joint_handles:
             state.append(sim.simxGetJointPosition(self.clientID, handle, sim.simx_opmode_buffer)[1])
+        #print("state", state)
         return np.array(state)
 
     def reset(self):
-        for handle in self.servo_handles:
+        for handle in self.joint_handles:
             sim.simxSetJointTargetPosition(self.clientID, handle, 0, 
                                             sim.simx_opmode_oneshot)
+        # Change Box positions
+        rand_angle = random.randint(0, 359) 
+        x, y = self.get_new_pos(rand_angle)
+        sim.simxSetObjectPosition(self.clientID, self.green_box, self.joint_handles[0], 
+                                    (x, y, 0), sim.simx_opmode_oneshot)
+        sim.simxSetObjectPosition(self.clientID, self.red_box, self.joint_handles[0], 
+                                    (-x, -y, 0), sim.simx_opmode_oneshot)
+        # set state variable
+        self.green_box_cords = (x, y)
         return self.get_state()
-        
+    
+    @staticmethod
+    def get_new_pos(angle):
+        r = 0.20
+        theta_rad = radians(angle)
+        return (r*cos(theta_rad), r*sin(theta_rad))
