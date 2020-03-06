@@ -38,6 +38,7 @@ def get_train_dir(faulty_joints):
     if not os.path.exists(parent_dir):
             os.mkdir(parent_dir)
     # Create training dir inside parent directory
+
     i = 0
     while True:
         train_dir = os.path.join(parent_dir, f'Training_{i}')
