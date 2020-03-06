@@ -22,10 +22,22 @@ from Poppy_Ergo.env import PoppyEnv
 
 def parse_joint_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--fault_joints", default=0, type=list, help="Faulty joints")
+    parser.add_argument("--num_episodes", default=1000, type=int, help="Number of training episodes")
+    parser.add_argument("--eps_decay", default=0.996, type=float, help="Controls exploration")
+    parser.add_argument("--port", default=19997, type=int, help="Port at which CoppeliaSim is running")
+    parser.add_argument("--ip", default='127.0.0.1', type=str, help="IP to connect to CoppeliaSim")
+    parser.add_argument("--faulty_joints", default=-1, nargs='*', help="Faulty joints")
     return parser.parse_args()
 
-def get_train_dir(parent_dir):
+def get_train_dir(faulty_joints):
+    # Make Parent dir according to faulty joints
+    if faulty_joints == -1:
+        parent_dir = os.path.join('Training_Files', 'All_Joints')
+    else:
+        parent_dir = os.path.join('Training_Files', 'Joints_'.join(faulty_joints))
+    if not os.path.exists(parent_dir):
+            os.mkdir(parent_dir)
+    # Create training dir inside parent directory
     i = 0
     while True:
         train_dir = os.path.join(parent_dir, f'Training_{i}')
@@ -97,7 +109,7 @@ if __name__ == "__main__":
     print('Program started')
     sim.simxFinish(-1) # just in case, close all opened connections
     
-    clientID=conect_and_load(19997, '127.0.0.1')
+    clientID=conect_and_load(args.port, args.ip)
     
     print('Starting the simulation')
     sim.simxStartSimulation(clientID, sim.simx_opmode_oneshot)
@@ -109,28 +121,20 @@ if __name__ == "__main__":
         
         _, green_box = sim.simxGetObjectHandle(clientID, "Green_Box", sim.simx_opmode_blocking)
         _, red_box = sim.simxGetObjectHandle(clientID, "Red_Box", sim.simx_opmode_blocking)        
-        env = PoppyEnv(clientID, args.fault_joints, green_box, red_box)
+        env = PoppyEnv(clientID, args.faulty_joints, green_box, red_box)
         
-        eps_start=1.0
-        eps_end=0.01
-        eps_decay=0.996
-        # EPS DECAY RATE CHANGED
-        
-        NUM_EPISODES = 1000    #number of episodes to train
+        print_info(f"Eps Decay Rate is {args.eps_decay}")
         MAX_T = 1000
         SEED = 0
 
-        parent_dir = 'Training_Files'
-        train_dir = get_train_dir(parent_dir)
+        train_dir = get_train_dir(list(args.faulty_joints))
         
         # save hyperparameters
         hyperparams = { 
-                        'num_episodes': NUM_EPISODES,
+                        'num_episodes': args.num_episodes,
                         'max_t': MAX_T,
                         'seed': SEED,
-                        'eps_start': eps_start,
-                        'eps_end': eps_end,
-                        'eps_decay': eps_decay
+                        'eps_decay': args.eps_decay
         }
 
         with open(f'{train_dir}/params.pickle', 'wb') as f:
@@ -146,11 +150,8 @@ if __name__ == "__main__":
         writer = SummaryWriter(os.path.join(train_dir, 'summary'))
     
         # train
-        time1 = datetime.datetime.now()
-        train(agent, env, writer, train_dir, n_episodes=NUM_EPISODES, eps_decay=eps_decay)
-        time2 = datetime.datetime.now()
-        print_info(f'Time taken for {NUM_EPISODES} is {time2-time1}')
-
+        train(agent, env, writer, train_dir, n_episodes=args.num_episodes, eps_decay=args.eps_decay)
+        
         # stopping the simulation
         sim.simxStopSimulation(clientID, sim.simx_opmode_oneshot)
         print('Stopped the simulation')

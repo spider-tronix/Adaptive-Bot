@@ -7,26 +7,20 @@ import sim
 import time
 from math import sin, cos, radians, pi
 
-#### action map ########
-# 0 - no movement
-# 1 - move left by 1 degree
-# 2 - move right by 1 degree
-
-#### possible spaces ########
-# -2.6179075241088867
-# -1.5772767066955566
-# -2.617981433868408
-
-ANGLE_DISCRETIZATION = 5
-BOX_DISTANCE = 0.3
+ANGLE_DISCRETIZATION = 10
+BOX_DISTANCE = 0.2
 
 class PoppyEnv(gym.Env):
     
-    def __init__(self, clientID, fault_joints, green_box, red_box):
+    def __init__(self, clientID, faulty_joints, green_box, red_box):
         self.num_joints = 6
         self.clientID = clientID
         self.green_box = green_box
         self.red_box = red_box
+        if faulty_joints != -1:
+            self.faulty_joints = [int(joint) for joint in faulty_joints]
+        else:
+            self.faulty_joints = []
         self.action_map = {0:0, 1:ANGLE_DISCRETIZATION, 2:-ANGLE_DISCRETIZATION}
         
         self.action_size = self.num_joints*3        # 0, left, right
@@ -47,7 +41,7 @@ class PoppyEnv(gym.Env):
         # print positions
         for i, handle in enumerate(self.joint_handles, start=1):
             print(f"m{i}_pos", sim.simxGetJointPosition(self.clientID, handle, sim.simx_opmode_streaming)[1])
-
+        print(f"Faulty joints {self.faulty_joints}")
 
     def _setup_spaces(self):
         self.action_space = spaces.Discrete(self.action_size)
@@ -58,8 +52,12 @@ class PoppyEnv(gym.Env):
     def step(self, action):
             assert self.action_space.contains(action)
             
-            handle = self.joint_handles[int(action/3)]
+            joint = int(action/3)
+            handle = self.joint_handles[joint]
             value = self.action_map[action%3]
+            
+            if joint in self.faulty_joints:
+                value = 0 
 
             #for angle, handle in zip(action, self.joint_handles)        
             cur_pos = sim.simxGetJointPosition(self.clientID,handle,sim.simx_opmode_buffer)[1]
@@ -107,7 +105,6 @@ class PoppyEnv(gym.Env):
         rand_angle = radians(random.randint(0, 359))        
         self.box_x, self.box_y = (BOX_DISTANCE*cos(rand_angle), BOX_DISTANCE*sin(rand_angle))
         self.box_z = random.randint(0,2)*0.1
-        print("May be change this")
         sim.simxSetObjectPosition(self.clientID, self.green_box, self.joint_handles[0], 
                                     (self.box_x, self.box_y, self.box_z), sim.simx_opmode_oneshot)
         sim.simxSetObjectPosition(self.clientID, self.red_box, self.joint_handles[0], 
