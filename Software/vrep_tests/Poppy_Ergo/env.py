@@ -18,10 +18,11 @@ from math import sin, cos, radians, pi
 # -2.617981433868408
 
 ANGLE_DISCRETIZATION = 5
+BOX_DISTANCE = 0.3
 
 class PoppyEnv(gym.Env):
     
-    def __init__(self, clientID, green_box, red_box):
+    def __init__(self, clientID, fault_joints, green_box, red_box):
         self.num_joints = 6
         self.clientID = clientID
         self.green_box = green_box
@@ -66,7 +67,12 @@ class PoppyEnv(gym.Env):
 
             # give reward for make it straight
             reward, done = self.detect_collision()
-            return self.get_state(), reward, done, {}
+
+            state = [self.box_x, self.box_y]
+            for handle in self.joint_handles:
+                state.append(sim.simxGetJointPosition(self.clientID, handle, sim.simx_opmode_buffer)[1])
+
+            return np.array(state), reward, done, {}
     
     def detect_collision(self):
         reward = 0
@@ -88,33 +94,28 @@ class PoppyEnv(gym.Env):
                 done = True
             return reward, done
         else:
-            raise NotImplementedError
+            print("Error in Detecting Collision")
+            quit()
         
-    def get_state(self):
-        state = [self.green_box_cords[0], self.green_box_cords[1]]
-        # Add servo angles
-        for handle in self.joint_handles:
-            state.append(sim.simxGetJointPosition(self.clientID, handle, sim.simx_opmode_buffer)[1])
-        #print("state", state)
-        return np.array(state)
-
+  
+  
     def reset(self):
         for handle in self.joint_handles:
             sim.simxSetJointTargetPosition(self.clientID, handle, 0, 
                                             sim.simx_opmode_oneshot)
         # Change Box positions
-        rand_angle = random.randint(0, 359) 
-        x, y = self.get_new_pos(rand_angle)
+        rand_angle = radians(random.randint(0, 359))        
+        self.box_x, self.box_y = (BOX_DISTANCE*cos(rand_angle), BOX_DISTANCE*sin(rand_angle))
+
+        print("May be change this")
         sim.simxSetObjectPosition(self.clientID, self.green_box, self.joint_handles[0], 
-                                    (x, y, 0), sim.simx_opmode_oneshot)
+                                    (self.box_x, self.box_y, 0.1), sim.simx_opmode_oneshot)
         sim.simxSetObjectPosition(self.clientID, self.red_box, self.joint_handles[0], 
-                                    (-x, -y, 0), sim.simx_opmode_oneshot)
-        # set state variable
-        self.green_box_cords = (x, y)
-        return self.get_state()
+                                    (-self.box_x, -self.box_y, 0.1), sim.simx_opmode_oneshot)
+        
+        state = [self.box_x, self.box_y]
+        for handle in self.joint_handles:
+            state.append(sim.simxGetJointPosition(self.clientID, handle, sim.simx_opmode_buffer)[1])
+        return np.array(state)
+
     
-    @staticmethod
-    def get_new_pos(angle):
-        r = 0.20
-        theta_rad = radians(angle)
-        return (r*cos(theta_rad), r*sin(theta_rad))

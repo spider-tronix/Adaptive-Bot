@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath('..'))
 import sim
 # simRemoteApi.start(19999)
 
+import argparse
 import random
 import time
 import datetime
@@ -19,6 +20,10 @@ from torch.utils.tensorboard import SummaryWriter
 from dqn_agent import Agent
 from Poppy_Ergo.env import PoppyEnv
 
+def parse_joint_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--fault_joints", default=0, type=list, help="Faulty joints")
+    return parser.parse_args()
 
 def get_train_dir(parent_dir):
     i = 0
@@ -75,19 +80,20 @@ def train(agent, env, writer, train_dir, n_episodes=2000, max_t=1000, eps_start=
 
 
 def print_info(info):
-    print('-5'*10,'\t', info, '\t', '-'*5)
+    print('-'*5,'\t', info, '\t', '-'*5)
 
 
 def conect_and_load(port, ip):
     clientID = sim.simxStart(ip,port,True,True,5000,5) # Connect to CoppeliaSim
-    scene_path = os.path.join('vrep-scene', 'poppy_two_target_scene.ttt')
+    scene_path = os.path.join('vrep-scene', 'poppy_two_target_pos_z.ttt')
     print('-'*5, 'Scene path:', scene_path, '-'*5)
     sim.simxLoadScene(clientID, scene_path, 0xFF, sim.simx_opmode_blocking)
     return clientID
 
 
 if __name__ == "__main__":
-    
+    args = parse_joint_args()
+
     print('Program started')
     sim.simxFinish(-1) # just in case, close all opened connections
     
@@ -101,9 +107,9 @@ if __name__ == "__main__":
         print('Connected to remote API server')
         time.sleep(2)
         
-        _, green_box = sim.simxGetObjectHandle(clientID, "Cuboid1", sim.simx_opmode_blocking)
-        _, red_box = sim.simxGetObjectHandle(clientID, "Cuboid2", sim.simx_opmode_blocking)        
-        env = PoppyEnv(clientID, green_box, red_box)
+        _, green_box = sim.simxGetObjectHandle(clientID, "Green_Box", sim.simx_opmode_blocking)
+        _, red_box = sim.simxGetObjectHandle(clientID, "Red_Box", sim.simx_opmode_blocking)        
+        env = PoppyEnv(clientID, args.fault_joints, green_box, red_box)
         
         eps_start=1.0
         eps_end=0.01
@@ -140,8 +146,11 @@ if __name__ == "__main__":
         writer = SummaryWriter(os.path.join(train_dir, 'summary'))
     
         # train
+        time1 = datetime.datetime.now()
         train(agent, env, writer, train_dir, n_episodes=NUM_EPISODES, eps_decay=eps_decay)
-        
+        time2 = datetime.datetime.now()
+        print_info(f'Time taken for {NUM_EPISODES} is {time2-time1}')
+
         # stopping the simulation
         sim.simxStopSimulation(clientID, sim.simx_opmode_oneshot)
         print('Stopped the simulation')
