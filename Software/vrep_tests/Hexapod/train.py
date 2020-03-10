@@ -124,7 +124,6 @@ if __name__ == "__main__":
     sim.simxSynchronousTrigger(clientID)
     time.sleep(1)
     
-    print_info("Try containing the Allowed angles")
     if clientID!=-1:
         print('Connected to remote API server')
         time.sleep(1)

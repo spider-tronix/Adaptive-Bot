@@ -43,8 +43,7 @@ class HexapodEnv(gym.Env):
 
 
     def _get_joint_handles(self):
-        self.hexapod_handle = sim.simxGetObjectHandle(self.clientID, 'hexapod', blocking)[1] 
-        print("Hexapod handle", self.hexapod_handle)       
+        self.hexapod_handle = sim.simxGetObjectHandle(self.clientID, 'hexapod', blocking)[1]     
         self.joint_handles = {} # get joint handles
         for i in range(6):
             for j in range(1):
@@ -104,7 +103,8 @@ class HexapodEnv(gym.Env):
                 sim.simxSynchronousTrigger(self.clientID)
         
         self.prev_pos = sim.simxGetObjectPosition(self.clientID, self.hexapod_handle, -1, buffer)[1]
-        return np.zeros(self.state_size)     # hope coppeliaSim set them properly
+        self.state = np.ones(self.state_size)*120*(3.14/180)
+        return self.state     # hope coppeliaSim set them properly
 
 
     def step(self, action):
@@ -127,16 +127,16 @@ class HexapodEnv(gym.Env):
             sim.simxSynchronousTrigger(self.clientID)
             sim.simxSetJointTargetPosition(self.clientID,parent_handle,-30*(3.14/180),oneshot)
             sim.simxSynchronousTrigger(self.clientID)
+            
+            # update state, reward, done
             reward, done = self.calc_reward()
+            self.state[joint] = new_pos
         else:
             reward = -1
             done = False
+
+        return self.state, reward, done, {}
         
-        state = []
-        for handle in self.joint_handles.values():
-            state.append(sim.simxGetJointPosition(self.clientID, handle, buffer)[1])   
-        return np.array(state), reward, done, {}
-    
 
     def calc_reward(self):
         reward = 0
