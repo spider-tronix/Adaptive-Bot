@@ -19,6 +19,8 @@ GOAL_DISTANCE = 0.2
 DISTANCE_TO_WALK = 0.5
 MAX_ANGLE = 30*(3.14/180)
 
+emptyBuff = bytearray()   # used as parameter to remoteAPI function
+
 class HexapodEnv(gym.Env):
     
     def __init__(self, clientID, faulty_joints, test=True):
@@ -70,11 +72,6 @@ class HexapodEnv(gym.Env):
         # Get the positions now
         self.init_pos = sim.simxGetObjectPosition(self.clientID, self.hexapod_handle, -1, buffer)[1]
         print("Hexapod init Pos(Relative to world): ", self.init_pos)
-        #self.init_joint_pos = []
-        # for joint, handle in self.joint_handles.items():
-        #     pos = sim.simxGetJointPosition(self.clientID, handle, buffer)[1]
-        #     self.init_joint_pos.append(pos)
-        #     print(joint, 'Joint Pos: ', pos)
         
         # Make the faulty joints invisible
         if self.test:
@@ -95,7 +92,6 @@ class HexapodEnv(gym.Env):
     def reset(self):        
         
         # reset objects dynamically in lua script
-        emptyBuff = bytearray()
         result,collision_state,retFloats,retStrings,retBuffer=sim.simxCallScriptFunction(self.clientID,
                                                             "hexapod",
                                                             sim.sim_scripttype_childscript,
@@ -104,7 +100,8 @@ class HexapodEnv(gym.Env):
 
         for link, angle in zip(self.links, [0, -30, 120]):
             for handle in link.values():
-                sim.simxSetJointTargetPosition(self.clientID, handle, angle*(3.14/180), blocking)
+                sim.simxSetJointTargetPosition(self.clientID, handle, angle*(3.14/180), oneshot)
+                sim.simxSynchronousTrigger(self.clientID)
         
         self.prev_pos = sim.simxGetObjectPosition(self.clientID, self.hexapod_handle, -1, buffer)[1]
         return np.zeros(self.state_size)     # hope coppeliaSim set them properly
@@ -120,26 +117,24 @@ class HexapodEnv(gym.Env):
         
         if joint in self.faulty_joints:
             value = 0 
+        
         cur_pos = sim.simxGetJointPosition(self.clientID,handle,buffer)[1]
         new_pos = cur_pos + value*(3.14/180)
-        if np.abs(new_pos) <= MAX_ANGLE:   # Limiting it from rotating beyond certain degree
-            sim.simxSetJointTargetPosition(self.clientID,parent_handle,-45*(3.14/180),blocking)
+        if np.abs(new_pos) <= MAX_ANGLE:   # Limiting it from rotating beyond |30| degree
+            sim.simxSetJointTargetPosition(self.clientID,parent_handle,-45*(3.14/180),oneshot)
+            sim.simxSynchronousTrigger(self.clientID)
             sim.simxSetJointTargetPosition(self.clientID,handle,new_pos,oneshot)
-            sim.simxSetJointTargetPosition(self.clientID,parent_handle,-30*(3.14/180),blocking)
+            sim.simxSynchronousTrigger(self.clientID)
+            sim.simxSetJointTargetPosition(self.clientID,parent_handle,-30*(3.14/180),oneshot)
+            sim.simxSynchronousTrigger(self.clientID)
             reward, done = self.calc_reward()
         else:
             reward = -1
             done = False
         
         state = []
-        # CAN FASTEn this by including only the one that is changed
         for handle in self.joint_handles.values():
-            state.append(sim.simxGetJointPosition(self.clientID, handle, buffer)[1])
-
-        # straighten the final positions
-        # for handle in self.links[2].values():
-        #     sim.simxSetJointTargetPosition(self.clientID,handle,120*(3.14/180),oneshot)
-            
+            state.append(sim.simxGetJointPosition(self.clientID, handle, buffer)[1])   
         return np.array(state), reward, done, {}
     
 
@@ -149,11 +144,7 @@ class HexapodEnv(gym.Env):
         cur_pos = sim.simxGetObjectPosition(self.clientID, self.hexapod_handle, -1, buffer)[1]
 
         if cur_pos[2] - self.prev_pos[2] > 0.001:
-            print("m")
             reward = 1
-        elif cur_pos[2] - self.prev_pos[2] < -0.001:
-            print("b")
-            reward = -1
         self.prev_pos = cur_pos   # update prev pos
 
         if cur_pos[2] > DISTANCE_TO_WALK:

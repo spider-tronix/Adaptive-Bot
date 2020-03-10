@@ -72,6 +72,7 @@ def train(agent, env, writer, train_dir, n_episodes=2000, max_t=1000, eps_start=
         state = env.reset()
         time.sleep(0.1)
         score = 0
+        time1 = datetime.datetime.now()
         for _ in range(max_t):
             action = agent.act(state, eps)
             next_state, reward, done, _ = env.step(action)
@@ -84,7 +85,7 @@ def train(agent, env, writer, train_dir, n_episodes=2000, max_t=1000, eps_start=
         scores_window.append(score)       # save most recent score
         scores.append(score)              # save most recent score
         eps = max(eps_end, eps_decay*eps) # decrease epsilon
-        print('\rEpisode {}\tScore: {}\tepsilon: {:.2f}'.format(i_episode, score, eps))
+        print('\rEpisode {}\tScore: {}\tepsilon: {:.2f}\t {}'.format(i_episode, score, eps, datetime.datetime.now() - time1))
 
         writer.add_scalar("epsilon", eps, global_step=i_episode)
         writer.add_scalar("mean scores", np.mean(scores_window), global_step=i_episode)
@@ -118,7 +119,9 @@ if __name__ == "__main__":
     clientID=conect_and_load(args.port, args.ip)
     
     print('Starting the simulation')
+    sim.simxSynchronous(clientID, 1)   # enable synchoronous mode
     sim.simxStartSimulation(clientID, sim.simx_opmode_oneshot)
+    sim.simxSynchronousTrigger(clientID)
     time.sleep(1)
     
     print_info("Try containing the Allowed angles")
