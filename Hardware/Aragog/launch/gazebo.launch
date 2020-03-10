@@ -10,11 +10,27 @@
     name="spawn_model"
     pkg="gazebo_ros"
     type="spawn_model"
-    args="-file $(find Aragog URDF part 2)/urdf/Aragog URDF part 2.urdf -urdf -model Aragog URDF part 2"
+    args="-file $(find Aragog)/urdf/Aragog.urdf -urdf -model Aragog
+    -X 0 
+    -y 0
+    -Z 0
+    -R 0
+    -P 0
+    -Y 1.57
+    -J middle_revolute 0.5
+    -J left_revolute 0.5
+    -J right_revolute 0.5"
     output="screen" />
   <node
     name="fake_joint_calibration"
     pkg="rostopic"
     type="rostopic"
     args="pub /calibrated std_msgs/Bool true" />
+  
+  <arg name="model" default="$(find Aragog)/urdf/Aragog.urdf"/>
+  <param name="robot_description" command="cat '$(find Aragog)/urdf/Aragog.urdf'"/>
+
+  <include 
+    file ="$(find Aragog_control)/launch/Aragog_control.launch"/>
+   
 </launch>

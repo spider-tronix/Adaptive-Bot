@@ -1,5 +1,5 @@
 <package format="2">
-  <name>Aragog URDF part 2</name>
+  <name>Aragog</name>
   <version>1.0.0</version>
   <description>
     <p>URDF Description package for Aragog URDF part 2</p>
