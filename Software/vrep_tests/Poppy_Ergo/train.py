@@ -17,7 +17,7 @@ import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
-from dqn_agent import Agent
+from Poppy_Ergo.dqn_agent import Agent
 from Poppy_Ergo.env import PoppyEnv
 
 def parse_joint_args():

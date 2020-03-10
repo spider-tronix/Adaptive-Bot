@@ -12,7 +12,7 @@ import numpy as np
 
 import torch
 
-from dqn_agent import Agent
+from Poppy_Ergo.dqn_agent import Agent
 from Poppy_Ergo.env import PoppyEnv
 
 
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     print_info('Program started')
     sim.simxFinish(-1) # just in case, close all opened connections
     
-    faulty_joints, model_dir = open_scene()
+    faulty_joints, model_path = open_scene()
 
     clientID=conect_and_load(19997, '127.0.0.1')
     
@@ -114,14 +114,14 @@ if __name__ == "__main__":
 
         env = PoppyEnv(clientID, faulty_joints)
         
-        with open(f'{model_dir}/params.pickle', 'rb') as f: 
+        with open(os.path.join(os.path.dirname(model_path), 'params.pickle'), 'rb') as f: 
             params = pickle.load(f)
-
-        agent = Agent(env.state_size, env.action_size, params.num_layers, 
-                                        params.hidden_size, params.seed)
+            
+        agent = Agent(env.state_size, env.action_size, params['num_layers'],
+                                        params['hidden_size'], params['seed'])
 
         # load agent q-network
-        agent.load(model_dir)
+        agent.load(model_path)
         
         # test
         test(agent, env, n_episodes=1)
