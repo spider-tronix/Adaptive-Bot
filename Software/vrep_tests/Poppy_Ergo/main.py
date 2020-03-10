@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath('..'))
 
 import sim
 # simRemoteApi.start(19999)
-
+import pickle
 import datetime
 import time
 import numpy as np
@@ -24,7 +24,7 @@ def test(agent, env, n_episodes=10, max_t=1000):
         state = env.reset()
         time.sleep(0.5)
         score = 0
-        for t in range(max_t):
+        for _ in range(max_t):
             action = agent.act(state, eps=0)
             print(action)
             next_state, reward, done, _ = env.step(action)
@@ -48,22 +48,43 @@ def open_scene():
     robot = int(input("Choose Robot to test:\n1.Poppy Ergo (Hand Robot)\n2.Hexapod\n"))
     if robot == 1:  # Poppy Ergo
         broken_links = int(input("Choose Configuration:\n1.All joints working" \
-                                                    "\n2.Faults in Joint 2 and 3" \
-                                                    "\n3.Faults in Joint 4 and 5\n"))
+                                                    "\n2.Faults in Joint 3" \
+                                                    "\n3.Faults in Joint 2 and 4"
+                                                    "\n4.Faults in Joint 1, 3 and 5"\
+                                                    "\n5.Faults in Joints 1, 2 and 4\n"))
+
+        
         if broken_links == 1:
-            return robot, 0
+            model_dir = "All_Joints"
+            faulty_joints = -1
         elif broken_links == 2:
-            return robot, [2,3]
+            model_dir = "Joints_3"
+            faulty_joints = [3] 
         elif broken_links == 3:
-            return robot [4,5]
+            model_dir = "Joints_2_4"
+            faulty_joints = [2, 4]
+        elif broken_links == 4:
+            model_dir = "Joints_1_3_5"
+            faulty_joints = [1,3,5] 
+        elif broken_links == 5:
+            model_dir = "Joints_1_2_4"
+            faulty_joints = [1,2,4] 
         else:
             print("Choose between given options only")
             quit()
+
+        model_path = os.path.join("Trained_Agents", model_dir, "target_network_final")
+        if not os.path.exists(model_path):
+            print("Agent not trained for chose configuration")
+            quit()
+        return faulty_joints, model_path
     elif robot == 2:
         print("Hexapod not implemented")
+        quit()
     else:
         print("Choose between 1 and 2 only")
         quit()
+
 
 def conect_and_load(port, ip):
     clientID = sim.simxStart(ip,port,True,True,5000,5) # Connect to CoppeliaSim
@@ -78,9 +99,9 @@ if __name__ == "__main__":
     print_info('Program started')
     sim.simxFinish(-1) # just in case, close all opened connections
     
-    robot, broken_links = open_scene()
+    faulty_joints, model_dir = open_scene()
 
-    clientID=conect_and_load(19998, '127.0.0.2')
+    clientID=conect_and_load(19997, '127.0.0.1')
     
     print('-'*10, 'Starting the simulation', '-'*10)
     sim.simxStartSimulation(clientID, sim.simx_opmode_oneshot)
@@ -91,17 +112,19 @@ if __name__ == "__main__":
         print ('Connected to remote API server')
         time.sleep(2)
 
-        _, green_box = sim.simxGetObjectHandle(clientID, "Green_Box", sim.simx_opmode_blocking)
-        _, red_box = sim.simxGetObjectHandle(clientID, "Red_Box", sim.simx_opmode_blocking)        
-        env = PoppyEnv(clientID, broken_links, green_box, red_box)
+        env = PoppyEnv(clientID, faulty_joints)
         
-        agent = Agent(env.state_size, env.action_size, seed=0)
+        with open(f'{model_dir}/params.pickle', 'rb') as f: 
+            params = pickle.load(f)
+
+        agent = Agent(env.state_size, env.action_size, params.num_layers, 
+                                        params.hidden_size, params.seed)
 
         # load agent q-network
-        agent.load('Training_Files/Training_1/target_network_50')
+        agent.load(model_dir)
         
         # test
-        test(agent, env, n_episodes=5)
+        test(agent, env, n_episodes=1)
          
         # stopping the simulation
         sim.simxStopSimulation(clientID, sim.simx_opmode_oneshot)

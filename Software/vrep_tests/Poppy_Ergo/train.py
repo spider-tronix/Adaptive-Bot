@@ -139,7 +139,9 @@ if __name__ == "__main__":
                         'num_episodes': args.num_episodes,
                         'max_t': args.max_t,
                         'seed': args.seed,
-                        'eps_decay': args.eps_decay
+                        'eps_decay': args.eps_decay,
+                        'num_layers': args.num_layers,
+                        'hidden_size': args.hidden_size
         }
 
         with open(f'{train_dir}/params.pickle', 'wb') as f: 
