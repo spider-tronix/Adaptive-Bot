@@ -22,11 +22,16 @@ from Poppy_Ergo.env import PoppyEnv
 
 def parse_joint_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--num_episodes", default=1000, type=int, help="Number of training episodes")
-    parser.add_argument("--eps_decay", default=0.996, type=float, help="Controls exploration")
     parser.add_argument("--port", default=19997, type=int, help="Port at which CoppeliaSim is running")
     parser.add_argument("--ip", default='127.0.0.1', type=str, help="IP to connect to CoppeliaSim")
+    parser.add_argument("--num_episodes", default=1000, type=int, help="Number of training episodes")
+    parser.add_argument("--max_t", default=1000, type=int, help="Time steps per episode")
+    parser.add_argument("--eps_decay", default=0.996, type=float, help="Controls exploration")
     parser.add_argument("--faulty_joints", default=-1, nargs='*', help="Faulty joints")
+    parser.add_argument("--num_layers", default=2, type=int, help="Number of Layers in Q-Network")
+    parser.add_argument("--hidden_size", default=[64, 64], nargs='*', type=int, help="Number of activation units in hidden layers")
+    parser.add_argument("--load_dir", default=None, type=str, help="Path to load model")
+    parser.add_argument("--seed", default=0, type=int, help="To Maintain Reproducibility")
     return parser.parse_args()
 
 def get_train_dir(faulty_joints):
@@ -34,7 +39,7 @@ def get_train_dir(faulty_joints):
     if faulty_joints == -1:
         parent_dir = os.path.join('Training_Files', 'All_Joints')
     else:
-        parent_dir = os.path.join('Training_Files', 'Joints_'.join(faulty_joints))
+        parent_dir = os.path.join('Training_Files', 'Joints_' + '_'.join(list(faulty_joints)))
     if not os.path.exists(parent_dir):
             os.mkdir(parent_dir)
     # Create training dir inside parent directory
@@ -89,6 +94,7 @@ def train(agent, env, writer, train_dir, n_episodes=2000, max_t=1000, eps_start=
             agent.save(train_dir, i_episode)
             print('-'*10, 'Agent saved', '-'*10)
 
+
     return scores
 
 
@@ -97,6 +103,7 @@ def print_info(info):
 
 
 def conect_and_load(port, ip):
+    sim.simxFinish(-1) # just in case, close all opened connections
     clientID = sim.simxStart(ip,port,True,True,5000,5) # Connect to CoppeliaSim
     scene_path = os.path.join('vrep-scene', 'poppy_two_target_pos_z.ttt')
     print('-'*5, 'Scene path:', scene_path, '-'*5)
@@ -120,32 +127,30 @@ if __name__ == "__main__":
         print('Connected to remote API server')
         time.sleep(2)
         
-        _, green_box = sim.simxGetObjectHandle(clientID, "Green_Box", sim.simx_opmode_blocking)
-        _, red_box = sim.simxGetObjectHandle(clientID, "Red_Box", sim.simx_opmode_blocking)        
-        env = PoppyEnv(clientID, args.faulty_joints, green_box, red_box)
+       
+        env = PoppyEnv(clientID, args.faulty_joints)
         
         print_info(f"Eps Decay Rate is {args.eps_decay}")
-        MAX_T = 1000
-        SEED = 0
 
-        train_dir = get_train_dir(list(args.faulty_joints))
+        train_dir = get_train_dir(args.faulty_joints)
         
         # save hyperparameters
         hyperparams = { 
                         'num_episodes': args.num_episodes,
-                        'max_t': MAX_T,
-                        'seed': SEED,
+                        'max_t': args.max_t,
+                        'seed': args.seed,
                         'eps_decay': args.eps_decay
         }
 
-        with open(f'{train_dir}/params.pickle', 'wb') as f:
+        with open(f'{train_dir}/params.pickle', 'wb') as f: 
             pickle.dump(hyperparams, f)
 
         # Initialise the agents
-        agent = Agent(env.state_size, env.action_size, SEED)
+        agent = Agent(env.state_size, env.action_size, args.num_layers, args.hidden_size,  args.seed)
 
-        # load trained agent
-        # agent.load('Training_Files_2/Training_9/target_network_final')
+        if args.load_dir is not None:
+            agent.load(args.load_dir)
+            print_info("Model Loaded")
         
         # logs
         writer = SummaryWriter(os.path.join(train_dir, 'summary'))
