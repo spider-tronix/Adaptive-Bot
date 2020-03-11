@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-project(Aragog URDF part 2)
+project(Aragog)
 
 find_package(catkin REQUIRED)
 

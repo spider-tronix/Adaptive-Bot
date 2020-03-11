@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
-     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
-     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+
 <robot
-  name="Aragog URDF part 2">
+  name="Aragog">
   <link
     name="base_link">
     <inertial>
@@ -13,12 +11,12 @@
       <mass
         value="0.03170249194558" />
       <inertia
-        ixx="5.57716796288184E-06"
+        ixx="0.001"
         ixy="-2.9814567560052E-08"
         ixz="-1.45978738176302E-11"
-        iyy="2.87877286112393E-06"
+        iyy="0.001"
         iyz="1.86969467308466E-11"
-        izz="4.09670113187748E-06" />
+        izz="0.001" />
     </inertial>
     <visual>
       <origin
@@ -26,7 +24,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Aragog URDF part 2/meshes/base_link.STL" />
+          filename="package://Aragog/meshes/base_link.STL" />
       </geometry>
       <material
         name="">
@@ -40,7 +38,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Aragog URDF part 2/meshes/base_link.STL" />
+          filename="package://Aragog/meshes/base_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -51,14 +49,14 @@
         xyz="0.022665 -0.024691 1.5767E-10"
         rpy="0 0 0" />
       <mass
-        value="0.0099613" />
+        value="0.099613" />
       <inertia
-        ixx="2.4922E-06"
+        ixx="0.001"
         ixy="-6.5075E-07"
         ixz="-3.703E-13"
-        iyy="4.5337E-06"
+        iyy="0.001"
         iyz="1.1197E-13"
-        izz="3.1192E-06" />
+        izz="0.001" />
     </inertial>
     <visual>
       <origin
@@ -66,7 +64,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Aragog URDF part 2/meshes/right_leg.STL" />
+          filename="package://Aragog/meshes/right_leg.STL" />
       </geometry>
       <material
         name="">
@@ -80,7 +78,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Aragog URDF part 2/meshes/right_leg.STL" />
+          filename="package://Aragog/meshes/right_leg.STL" />
       </geometry>
     </collision>
   </link>
@@ -98,8 +96,8 @@
       xyz="1 0 0" />
     <limit
       lower="0"
-      upper="2"
-      effort="0"
+      upper="3.14"
+      effort="0.1"
       velocity="0" />
   </joint>
   <link
@@ -109,14 +107,14 @@
         xyz="-0.0015 -0.0086543 -2.4286E-16"
         rpy="0 0 0" />
       <mass
-        value="0.0064836" />
+        value="0.064836" />
       <inertia
-        ixx="1.099E-05"
+        ixx="0.001"
         ixy="1.0732E-22"
         ixz="-8.2747E-22"
-        iyy="8.1223E-06"
+        iyy="0.001"
         iyz="5.3734E-21"
-        izz="2.8777E-06" />
+        izz="0.001" />
     </inertial>
     <visual>
       <origin
@@ -124,7 +122,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Aragog URDF part 2/meshes/middle_leg.STL" />
+          filename="package://Aragog/meshes/middle_leg.STL" />
       </geometry>
       <material
         name="">
@@ -138,7 +136,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Aragog URDF part 2/meshes/middle_leg.STL" />
+          filename="package://Aragog/meshes/middle_leg.STL" />
       </geometry>
     </collision>
   </link>
@@ -156,8 +154,8 @@
       xyz="1 0 0" />
     <limit
       lower="0"
-      upper="2"
-      effort="0"
+      upper="3.14"
+      effort="0.1"
       velocity="0" />
   </joint>
   <link
@@ -167,14 +165,14 @@
         xyz="0.022665 -0.024691 -7.3476E-11"
         rpy="0 0 0" />
       <mass
-        value="0.0099613" />
+        value="0.099613" />
       <inertia
-        ixx="2.4922E-06"
+        ixx="0.001"
         ixy="-6.5075E-07"
         ixz="-3.6991E-13"
-        iyy="4.5337E-06"
+        iyy="0.001"
         iyz="1.1871E-13"
-        izz="3.1192E-06" />
+        izz="0.001" />
     </inertial>
     <visual>
       <origin
@@ -182,7 +180,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Aragog URDF part 2/meshes/left_leg.STL" />
+          filename="package://Aragog/meshes/left_leg.STL" />
       </geometry>
       <material
         name="">
@@ -196,7 +194,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Aragog URDF part 2/meshes/left_leg.STL" />
+          filename="package://Aragog/meshes/left_leg.STL" />
       </geometry>
     </collision>
   </link>
@@ -214,8 +212,50 @@
       xyz="1 0 0" />
     <limit
       lower="0"
-      upper="2"
-      effort="0"
+      upper="3.14"
+      effort="0.1"
       velocity="0" />
   </joint>
+
+ <gazebo>
+  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+    <robotNamespace>Aragog</robotNamespace>
+    <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+    <legacyModeNS>true</legacyModeNS>
+  </plugin> 
+</gazebo>
+
+
+
+<transmission name="tran1">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="left_revolute">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="left_revolute">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran2">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="right_revolute">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="right_revolute">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+ <transmission name="tran3">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="middle_revolute">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="middle_revolute">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
 </robot>
