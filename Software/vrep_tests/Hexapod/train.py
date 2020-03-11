@@ -29,8 +29,8 @@ def parse_joint_args():
     parser.add_argument("--eps_decay", default=0.996, type=float, help="Controls exploration")
     parser.add_argument("--faulty_joints", default=-1, nargs='*', help="Faulty joints")
     parser.add_argument("--load_dir", default=None, type=str, help="Path to load model")
-    parser.add_argument("--num_layers", default=3, type=int, help="Number of Layers in Q-Network")
-    parser.add_argument("--hidden_size", default=[256, 128, 64], nargs='*', type=int, help="Number of activation units in hidden layers")
+    # parser.add_argument("--num_layers", default=3, type=int, help="Number of Layers in Q-Network")
+    # parser.add_argument("--hidden_size", default=[256, 128, 64], nargs='*', type=int, help="Number of activation units in hidden layers")
     parser.add_argument("--seed", default=0, type=int, help="To Maintain Reproducibility")
     return parser.parse_args()
 
@@ -140,15 +140,13 @@ if __name__ == "__main__":
                         'max_t': args.max_t,
                         'seed': args.seed,
                         'eps_decay': args.eps_decay,
-                        'num_layers': args.num_layers,
-                        'hidden_size': args.hidden_size
         }
 
         with open(f'{train_dir}/params.pickle', 'wb') as f:
             pickle.dump(hyperparams, f)
 
         # Initialise the agents
-        agent = Agent(env.state_size, env.action_size, args.num_layers, args.hidden_size,  args.seed)
+        agent = Agent(env.state_size, env.action_size, args.seed)
 
         # load trained agent
         if args.load_dir is not None:
