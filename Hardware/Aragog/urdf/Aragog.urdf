@@ -81,6 +81,14 @@
           filename="package://Aragog/meshes/right_leg.STL" />
       </geometry>
     </collision>
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.05</mu>
+            <mu2>0.05</mu2>
+          </ode>
+        </friction>
+      </surface>
   </link>
   <joint
     name="right_revolute"
@@ -95,9 +103,9 @@
     <axis
       xyz="1 0 0" />
     <limit
-      lower="0"
+      lower="-3.14"
       upper="3.14"
-      effort="0.1"
+      effort="0.5"
       velocity="0" />
   </joint>
   <link
@@ -139,6 +147,15 @@
           filename="package://Aragog/meshes/middle_leg.STL" />
       </geometry>
     </collision>
+          <surface>
+        <friction>
+          <ode>
+            <mu>0.05</mu>
+            <mu2>0.05</mu2>
+          </ode>
+        </friction>
+      </surface>
+
   </link>
   <joint
     name="middle_revolute"
@@ -153,9 +170,9 @@
     <axis
       xyz="1 0 0" />
     <limit
-      lower="0"
+      lower="-3.14"
       upper="3.14"
-      effort="0.1"
+      effort="0.5"
       velocity="0" />
   </joint>
   <link
@@ -197,6 +214,14 @@
           filename="package://Aragog/meshes/left_leg.STL" />
       </geometry>
     </collision>
+  <surface>
+        <friction>
+          <ode>
+            <mu>0.03</mu>
+            <mu2>0.03</mu2>
+          </ode>
+        </friction>
+      </surface>
   </link>
   <joint
     name="left_revolute"
@@ -211,9 +236,9 @@
     <axis
       xyz="1 0 0" />
     <limit
-      lower="0"
+      lower="-3.14"
       upper="3.14"
-      effort="0.1"
+      effort="0.5"
       velocity="0" />
   </joint>
 
