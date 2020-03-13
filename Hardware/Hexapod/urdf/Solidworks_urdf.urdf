@@ -1,0 +1,928 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="Solidworks_urdf">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.08225 0.074104 0.085881"
+        rpy="0 0 0" />
+      <mass
+        value="0.1048" />
+      <inertia
+        ixx="0.00018197"
+        ixy="-1.7049E-22"
+        ixz="-8.482E-09"
+        iyy="0.0003174"
+        iyz="-5.0047E-23"
+        izz="0.00013645" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/base_link.STL" />
+      </geometry>
+      <!-- Friction Added to the links -->
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <!-- Friction ended for the links -->
+    </collision>
+  </link>
+
+
+  <link
+    name="leg_1">
+    <inertial>
+      <origin
+        xyz="0.0053892 0.018322 0.0084403"
+        rpy="0 0 0" />
+      <mass
+        value="0.018983" />
+      <inertia
+        ixx="1.155E-06"
+        ixy="1.9876E-08"
+        ixz="-1.1098E-11"
+        iyy="1.1051E-06"
+        iyz="-5.9483E-08"
+        izz="1.6234E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg_1.STL" />
+      </geometry>
+           <!-- Friction Added to the links -->
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <!-- Friction ended for the links -->
+    </collision>
+  </link>
+
+
+  <joint
+    name="joint1"
+    type="revolute">
+    <origin
+      xyz="0.12325 -0.15138 0.053531"
+      rpy="1.5708 0 0.088214" />
+    <parent
+      link="base_link" />
+    <child
+      link="leg_1" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="0"
+      velocity="0" />
+  </joint>
+
+
+  <link
+    name="leg1_2">
+    <inertial>
+      <origin
+        xyz="0.017075 0.014733 0.0014767"
+        rpy="0 0 0" />
+      <mass
+        value="0.0029862" />
+      <inertia
+        ixx="4.8457E-07"
+        ixy="-4.0487E-07"
+        ixz="-2.0597E-22"
+        iyy="4.8511E-07"
+        iyz="-3.226E-22"
+        izz="9.652E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg1_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg1_2.STL" />
+      </geometry>
+           <!-- Friction Added to the links -->
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <!-- Friction ended for the links -->
+    </collision>
+  </link>
+
+
+  <joint
+    name="joint1_2"
+    type="revolute">
+    <origin
+      xyz="-0.0079733 0.021532 0.01825"
+      rpy="1.5708 -0.57519 -1.5708" />
+    <parent
+      link="leg_1" />
+    <child
+      link="leg1_2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="0"
+      velocity="0" />
+  </joint>
+
+
+  <link
+    name="leg1_3">
+    <inertial>
+      <origin
+        xyz="0.0099113 -0.011147 -0.0063273"
+        rpy="0 0 0" />
+      <mass
+        value="0.012459" />
+      <inertia
+        ixx="5.4998E-07"
+        ixy="9.9382E-09"
+        ixz="8.536E-08"
+        iyy="6.8497E-06"
+        iyz="-3.482E-12"
+        izz="6.4111E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg1_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg1_3.STL" />
+      </geometry>
+           <!-- Friction Added to the links -->
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <!-- Friction ended for the links -->
+    </collision>
+  </link>
+
+
+  <joint
+    name="joint1_3"
+    type="revolute">
+    <origin
+      xyz="0.03182 0.03182 0"
+      rpy="1.5708 0 -0.33301" />
+    <parent
+      link="leg1_2" />
+    <child
+      link="leg1_3" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="0"
+      velocity="0" />
+  </joint>
+
+
+  <link
+    name="leg_2">
+    <inertial>
+      <origin
+        xyz="0.0054204 0.018275 0.0084403"
+        rpy="0 0 0" />
+      <mass
+        value="0.018983" />
+      <inertia
+        ixx="1.155E-06"
+        ixy="1.9876E-08"
+        ixz="-1.1098E-11"
+        iyy="1.1051E-06"
+        iyz="-5.9483E-08"
+        izz="1.6234E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg_2.STL" />
+      </geometry>
+           <!-- Friction Added to the links -->
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <!-- Friction ended for the links -->
+    </collision>
+  </link>
+
+
+  <joint
+    name="joint2"
+    type="revolute">
+    <origin
+      xyz="0.12325 -0.020378 0.053406"
+      rpy="1.5708 0 2.829" />
+    <parent
+      link="base_link" />
+    <child
+      link="leg_2" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="0"
+      velocity="0" />
+  </joint>
+
+
+  <link
+    name="leg2_2">
+    <inertial>
+      <origin
+        xyz="0.0170750743846497 0.0147326780839646 0.0198094371360172"
+        rpy="0 0 0" />
+      <mass
+        value="0.00298621706691457" />
+      <inertia
+        ixx="4.84565618395591E-07"
+        ixy="-4.04873011888228E-07"
+        ixz="-1.52201232709757E-22"
+        iyy="4.85110934550631E-07"
+        iyz="-6.68361934942846E-22"
+        izz="9.6519722734585E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg2_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg2_2.STL" />
+      </geometry>
+           <!-- Friction Added to the links -->
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <!-- Friction ended for the links -->
+    </collision>
+  </link>
+
+
+  <joint
+    name="joint2_2"
+    type="revolute">
+    <origin
+      xyz="0.010409 0.0212 0.01825"
+      rpy="1.5708 -1.263 -1.5708" />
+    <parent
+      link="leg_2" />
+    <child
+      link="leg2_2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="0"
+      velocity="0" />
+  </joint>
+  
+  
+  <link
+    name="leg2_3">
+    <inertial>
+      <origin
+        xyz="0.0101065345196007 0.00483778556758188 -0.00603820855538474"
+        rpy="0 0 0" />
+      <mass
+        value="0.0124586055430153" />
+      <inertia
+        ixx="5.49983838241903E-07"
+        ixy="9.93816462344761E-09"
+        ixz="8.53602558311101E-08"
+        iyy="6.84967215193542E-06"
+        iyz="-3.51793712120046E-12"
+        izz="6.41112281343549E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg2_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg2_3.STL" />
+      </geometry>
+           <!-- Friction Added to the links -->
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <!-- Friction ended for the links -->
+    </collision>
+  </link>
+  
+  
+  <joint
+    name="joint2_3"
+    type="revolute">
+    <origin
+      xyz="0.03182 0.03182 0"
+      rpy="1.5708 0 -1.0571" />
+    <parent
+      link="leg2_2" />
+    <child
+      link="leg2_3" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="0"
+      velocity="0" />
+  </joint>
+  
+  
+  <link
+    name="leg_3">
+    <inertial>
+      <origin
+        xyz="0.0084403264706611 0.0182751643145344 0.00542041597795439"
+        rpy="0 0 0" />
+      <mass
+        value="0.0189833990111419" />
+      <inertia
+        ixx="1.62341862057125E-06"
+        ixy="-5.94608569105944E-08"
+        ixz="1.10981784725658E-11"
+        iyy="1.1051363106871E-06"
+        iyz="1.98763775414993E-08"
+        izz="1.15499032431687E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg_3.STL" />
+      </geometry>
+           <!-- Friction Added to the links -->
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <!-- Friction ended for the links -->
+    </collision>
+  </link>
+  
+  
+  <joint
+    name="joint3"
+    type="revolute">
+    <origin
+      xyz="0.04125 -0.020378 0.053406"
+      rpy="1.5708 0 2.4075" />
+    <parent
+      link="base_link" />
+    <child
+      link="leg_3" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="0"
+      velocity="0" />
+  </joint>
+  
+  
+  <link
+    name="leg3_2">
+    <inertial>
+      <origin
+        xyz="0.0170750743846495 0.0147326780839642 -0.00939999999999505"
+        rpy="0 0 0" />
+      <mass
+        value="0.00298621706691457" />
+      <inertia
+        ixx="4.8456561839559E-07"
+        ixy="-4.0487301188823E-07"
+        ixz="1.32348898008484E-23"
+        iyy="4.85110934550633E-07"
+        iyz="-1.32348898008484E-22"
+        izz="9.65197227345851E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg3_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg3_2.STL" />
+      </geometry>
+           <!-- Friction Added to the links -->
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <!-- Friction ended for the links -->
+    </collision>
+  </link>
+  
+  
+  <joint
+    name="joint3_2"
+    type="revolute">
+    <origin
+      xyz="0.01825 0.0212 0"
+      rpy="0 0 -0.4604" />
+    <parent
+      link="leg_3" />
+    <child
+      link="leg3_2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="0"
+      velocity="0" />
+  </joint>
+  
+  
+  <link
+    name="leg3_3">
+    <inertial>
+      <origin
+        xyz="0.0101065358688055 -0.00557165295940751 0.00603800615150225"
+        rpy="0 0 0" />
+      <mass
+        value="0.0124586039078304" />
+      <inertia
+        ixx="5.49983801498149E-07"
+        ixy="9.93813286797573E-09"
+        ixz="-8.53754013811526E-08"
+        iyy="6.84967208502086E-06"
+        iyz="-3.51704361028484E-12"
+        izz="6.4111227503908E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg3_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg3_3.STL" />
+      </geometry>
+           <!-- Friction Added to the links -->
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <!-- Friction ended for the links -->
+    </collision>
+  </link>
+  
+  
+  <joint
+    name="joint3_3"
+    type="revolute">
+    <origin
+      xyz="0.03182 0.03182 0"
+      rpy="-1.5708 0 -0.5868" />
+    <parent
+      link="leg3_2" />
+    <child
+      link="leg3_3" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="0"
+      velocity="0" />
+  </joint>
+
+
+  
+  <link
+    name="leg_4">
+    <!-- xyz="0.0053892 0.018322 0.0084403"  Link 1-->
+
+    <!-- xyz="0.0084403264706611 0.0182751643145344 0.00542041597795439"  Link 3 -->
+
+    <!-- xyz="0.0054204 0.018275 0.0084403" Link 2 -->
+    <inertial>
+      <origin
+        xyz="0.00844032647 0.018275 0.0054204159"
+        rpy="0 1.57 0" />
+      <mass
+        value="0.00298621706691457" />
+      <inertia
+        ixx="4.8456561839559E-07"
+        ixy="-4.0487301188823E-07"
+        ixz="1.32348898008484E-23"
+        iyy="4.85110934550633E-07"
+        iyz="-1.32348898008484E-22"
+        izz="9.65197227345851E-07" />
+    </inertial>
+
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg_4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg_4.STL" />
+      </geometry>
+           <!-- Friction Added to the links -->
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <!-- Friction ended for the links -->
+    </collision>
+  </link>
+  
+  
+  <joint
+    name="joint_4"
+    type="revolute">
+    <origin
+      xyz="0.04125 -0.15138 0.053531"
+      rpy="1.5708 0 2.4798" />
+    <parent
+      link="base_link" />
+    <child
+      link="leg_4" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="0"
+      velocity="0" />
+  </joint>
+  
+  
+  <link
+    name="leg4_2">
+    <inertial>
+      <origin
+        xyz="0.0170750743846496 0.0147326780839646 -0.0094499999999999"
+        rpy="0 0 0" />
+      <mass
+        value="0.00298621706691457" />
+      <inertia
+        ixx="4.84565618395591E-07"
+        ixy="-4.04873011888224E-07"
+        ixz="8.53650392154725E-22"
+        iyy="4.8511093455064E-07"
+        iyz="2.24993126614424E-22"
+        izz="9.6519722734586E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg4_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg4_2.STL" />
+      </geometry>
+           <!-- Friction Added to the links -->
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <!-- Friction ended for the links -->
+    </collision>
+  </link>
+  
+  
+  <joint
+    name="joint4_2"
+    type="revolute">
+    <origin
+      xyz="0 0.021532 -0.01825"
+      rpy="-1.5708 0.99959 -1.5708" />
+    <parent
+      link="leg_4" />
+    <child
+      link="leg4_2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="0"
+      velocity="0" />
+  </joint>
+  
+  
+  <link
+    name="leg4_3">
+    <inertial>
+      <origin
+        xyz="0.00991126622482232 -0.00317404492760763 0.0063271111351442"
+        rpy="0 0 0" />
+      <mass
+        value="0.012458604673611" />
+      <inertia
+        ixx="5.49983818325467E-07"
+        ixy="9.93814733019435E-09"
+        ixz="-8.53754013931072E-08"
+        iyy="6.84967211756293E-06"
+        iyz="-3.51864824517023E-12"
+        izz="6.41112277921228E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg4_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Solidworks_urdf/meshes/leg4_3.STL" />
+      </geometry>
+           <!-- Friction Added to the links -->
+      <surface>
+        <friction>
+          <ode>
+            <mu>0.01</mu>
+            <mu2>0.01</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <!-- Friction ended for the links -->
+    </collision>
+  </link>
+  
+  
+  <joint
+    name="joint4_3"
+    type="revolute">
+    <origin
+      xyz="0.03182 0.03182 0"
+      rpy="-1.5708 0 -0.70137" />
+    <parent
+      link="leg4_2" />
+    <child
+      link="leg4_3" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="0"
+      velocity="0" />
+  </joint>
+</robot>
